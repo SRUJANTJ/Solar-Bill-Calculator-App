@@ -30,8 +30,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "ed466b08-d462-42d3-bf42-554b36ec6443"
+        "projectId": "3fb8934f-785a-4221-8cc0-1cef93cf19d9"
       }
-    }
+    },
+    "owner": "stjj"
   }
 }

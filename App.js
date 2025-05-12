@@ -80,35 +80,64 @@ export default function App() {
     await AsyncStorage.setItem('solar-data', JSON.stringify({ tariff: '' }));
     setShowTariffInput(true);
   };
+const closetraffic = () => {
+  if (tariff === '') {
+    setTariff('0'); // Set tariff to 0 if it's empty
+  }
+  setShowTariffInput(false); // Close the input
+};
 
-  const calculate = () => {
-    const g = parseFloat(generation);
-    const e = parseFloat(exportUnits);
-    const i = parseFloat(importUnits);
-    const t = parseFloat(tariff);
+const calculate = () => {
+  if (!exportUnits || !importUnits || !tariff) {
+    Alert.alert(
+      'Missing Fields',
+      'Please enter values for Export Units, Import Units, and Tariff.',
+      [{ text: 'OK', style: 'default' }]
+    );
+    return;
+  }
 
-    if (isNaN(g) || isNaN(e) || isNaN(i) || isNaN(t)) {
-      Alert.alert('Please enter valid numeric values.');
-      return;
-    }
+  const g = generation ? parseFloat(generation) : null; // Optional
+  const e = parseFloat(exportUnits);
+  const i = parseFloat(importUnits);
+  const t = parseFloat(tariff);
 
-    const netExport = e - i;
-    const netBill = netExport > 0 ? 0 : (i - e) * t;
-    const credit = netExport > 0 ? netExport * t : 0;
-    const savings = i * t;
-    const selfConsumed = g - e;
+  if ((g !== null && g < 0) || e < 0 || i < 0 || t < 0) {
+    Alert.alert(
+      'Invalid Input',
+      'Values cannot be negative.',
+      [{ text: 'OK', style: 'default' }]
+    );
+    return;
+  }
 
-    setResults({
-      importUnits: i,
-      netExport: parseFloat(netExport.toFixed(2)),
-      netBill: parseFloat(netBill.toFixed(2)),
-      credit: parseFloat(credit.toFixed(2)),
-      savings: parseFloat(savings.toFixed(2)),
-      selfConsumed: parseFloat(selfConsumed.toFixed(2))
-    });
+  if ((g !== null && isNaN(g)) || isNaN(e) || isNaN(i) || isNaN(t)) {
+    Alert.alert(
+      'Invalid Input',
+      'Please enter valid numeric values.',
+      [{ text: 'OK', style: 'default' }]
+    );
+    return;
+  }
 
-    saveToStorage();
-  };
+  const netExport = e - i;
+  const netBill = netExport > 0 ? 0 : (i - e) * t;
+  const credit = netExport > 0 ? netExport * t : 0;
+  const savings = i * t;
+  const selfConsumed = g !== null ? g - e : 'N/A';
+
+  setResults({
+    importUnits: i,
+    netExport: parseFloat(netExport.toFixed(2)),
+    netBill: parseFloat(netBill.toFixed(2)),
+    credit: parseFloat(credit.toFixed(2)),
+    savings: parseFloat(savings.toFixed(2)),
+    selfConsumed: selfConsumed !== 'N/A' ? parseFloat(selfConsumed.toFixed(2)) : 'N/A'
+  });
+
+  saveToStorage();
+};
+
 
   const handleClear = () => {
     setGeneration('');
@@ -136,19 +165,18 @@ export default function App() {
               style={styles.icon}
             />
             <Text style={styles.header}>Solar Calculator</Text>
-    <TouchableOpacity onPress={toggleTheme} style={styles.toggleContainer}>
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    width="48"  // Smaller size for minimal icon
-    height="48"  // Smaller size for minimal icon
-    fill={isDarkMode ? 'white' : 'black'} // Change SVG color based on theme
-  >
-    <Path d="M12 3V1l-1 2h2l-1-2zm4.6 2.1c-1.6-1.3-3.7-1.8-5.7-1.4C9.5 2.2 8.1 3.6 8.2 5.5c.1 1.6 1.4 2.9 3 2.9 1.1 0 2-.7 2.5-1.7 1.2-.3 2.5.1 3.2 1.1 1.7 2.1 1.3 5.3-.9 7-2.2 1.7-5.4 1.5-7.4-.8-1.6-1.7-2.1-4.2-1.4-6.3 1.2-3.1 4.4-5 7.7-5.3zm-.6 5.4c.8-1 1.1-2.4.5-3.5-.7-1.3-2.2-1.7-3.5-.9-1 .6-1.2 1.9-.6 2.8 1.1.8 2.3.7 3.2-.5z" />
-  </Svg>
-</TouchableOpacity>
-
-          </View>
+     <TouchableOpacity onPress={toggleTheme} style={styles.toggleButton}>
+        <Svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="32"
+          height="32"
+          fill={isDarkMode ? 'white' : 'black'}
+        >
+          <Path d="M12 3V1l-1 2h2l-1-2zm4.6 2.1c-1.6-1.3-3.7-1.8-5.7-1.4C9.5 2.2 8.1 3.6 8.2 5.5c.1 1.6 1.4 2.9 3 2.9 1.1 0 2-.7 2.5-1.7 1.2-.3 2.5.1 3.2 1.1 1.7 2.1 1.3 5.3-.9 7-2.2 1.7-5.4 1.5-7.4-.8-1.6-1.7-2.1-4.2-1.4-6.3 1.2-3.1 4.4-5 7.7-5.3zm-.6 5.4c.8-1 1.1-2.4.5-3.5-.7-1.3-2.2-1.7-3.5-.9-1 .6-1.2 1.9-.6 2.8 1.1.8 2.3.7 3.2-.5z" />
+        </Svg>
+      </TouchableOpacity>
+    </View>
 
           {tariff && !showTariffInput ? (
             <View style={styles.tariffContainer}>
@@ -173,7 +201,8 @@ Enter Tariff (₹ per unit):</Text>
               />
               <View style={styles.buttonRow}>
                 <Button title="Save Tariff" onPress={saveTariffAndCloseInput} />
-                <Button title="Clear Tariff" onPress={clearTariff} color="red" />
+                <Button title="Clear Tariff" onPress={clearTariff} color="green" />
+                <Button title="Cancel" onPress={closetraffic} color="red" />
               </View>
             </View>
           )}
@@ -264,24 +293,40 @@ const baseStyles = {
   },
   container: {
     flex: 1,
+    width: '100%',
   },
   scrollContainer: {
     padding: 20,
     paddingBottom: 40,
     marginTop: 20,
   },
-  headerContainer: {
+headerContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between', // Spread title and toggle
+  width: '100%',
+  paddingHorizontal: 16, // Padding on both sides
+  paddingTop: 16,
+  paddingBottom: 8,
+  backgroundColor: 'transparent', // Optional, or set theme-based color
+},
+
+  toggleContainer: {
+    width: '100%',
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'flex-end', // push to right side
+    paddingRight: 16,
+    marginBottom: 10,
   },
-    toggleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center', // Center the icon vertically
-    paddingRight: 10, // Adjust padding to ensure the icon is not too close to the edge
-
-
-    
+  toggleButton: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 24,
+    padding: 8,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   icon: {
     width: 50,
@@ -299,12 +344,12 @@ const baseStyles = {
     marginLeft: 10,
     fontSize: 16,
     color: 'blue',
- 
   },
   tariffContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+
   },
   editTariff: {
     marginLeft: 10,
@@ -313,6 +358,7 @@ const baseStyles = {
   },
   tariffInputContainer: {
     marginBottom: 20,
+    
   },
   label: {
     fontSize: 16,
@@ -347,6 +393,7 @@ const baseStyles = {
     fontSize: 14,
   },
 };
+
 
 // Light mode styles
 const lightStyles = StyleSheet.create({
