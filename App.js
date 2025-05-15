@@ -2,8 +2,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MainApp from './screens/MainApp';
-import PrivacyPolicy from './screens/PrivacyPolicy';
+import MainApp from './MainApp';
+import PrivacyPolicy from './PrivacyPolicy';
 
 const Stack = createNativeStackNavigator();
 

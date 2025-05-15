@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import {  Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 
 const PrivacyPolicy = () => {
   return (
