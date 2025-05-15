@@ -61,7 +61,7 @@ export default function MainApp() {
       }
     };
     loadData();
-    AsyncStorage.clear()
+    // AsyncStorage.clear()
   }, []);
 
   const saveToStorage = async () => {
