@@ -238,7 +238,7 @@ return (
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.headerContainer}>
           <Image
-            source={require('../assets/solarenergy.png')}
+            source={require('../assets/solarenergy.jpeg')}
             style={styles.icon}
           />
           <Text style={styles.header}>Solar Calculator</Text>

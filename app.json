@@ -4,29 +4,29 @@
     "slug": "solar-calculator",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/solarenergy.png",
+    "icon": "./assets/solarenergy.jpeg",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/solarenergy.png",
+      "image": "./assets/solarenergy.jpeg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.srujan.solarcalculator",
-      "icon": "./assets/solarenergy.png"
+      "icon": "./assets/solarenergy.jpeg"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/solarenergy.png",
+        "foregroundImage": "./assets/solarenergy.jpeg",
         "backgroundColor": "#ffffff"
       },
       "package": "com.srujan.solarcalculator",
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/solarenergy.png"
+      "favicon": "./assets/solarenergy.jpeg"
     },
     "extra": {
       "eas": {
