@@ -363,6 +363,7 @@ return (
           <Text style={styles.privacytext}>Privacy Policy</Text>
         </TouchableOpacity>
         <Text style={styles.footer}>© {new Date().getFullYear()} Developed by STJ</Text>
+        <Text style={styles.version}>Version 1.0.0</Text>
       </View>
     </KeyboardAvoidingView>
   </SafeAreaView>
@@ -371,6 +372,12 @@ return (
 }
 
 const baseStyles = {
+  version: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 10,
+    color: 'gray',  
+  },
    modalScreenContainer: {
     flex: 1,
     justifyContent: 'center',

@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.srujan.solarcalculator",
+      "bundleIdentifier": "com.stj.solarcalculator",
       "icon": "./assets/solarenergy.jpeg"
     },
     "android": {
@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/solarenergy.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.srujan.solarcalculator",
+      "package": "com.stj.solarcalculator",
       "edgeToEdgeEnabled": true
     },
     "web": {
