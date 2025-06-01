@@ -22,7 +22,9 @@ import Svg, { Path } from 'react-native-svg'; // Import SVG components
 import { useNavigation,useIsFocused  } from '@react-navigation/native';
 export default function MainApp() {
   const [generation, setGeneration] = useState('');
+  const [prevmonthExport, setprevmonthExport] = useState('');
   const [exportUnits, setExportUnits] = useState('');
+  const [prevmonthimport, setprevmonthImport] = useState('');
   const [importUnits, setImportUnits] = useState('');
   const [tariff, setTariff] = useState('');
   const [results, setResults] = useState(null);
@@ -47,6 +49,8 @@ export default function MainApp() {
           const parsedData = JSON.parse(storedData);
           if (parsedData.generation) setGeneration(parsedData.generation);
           if (parsedData.exportUnits) setExportUnits(parsedData.exportUnits);
+          if (parsedData.prevmonthExport) setprevmonthExport(parsedData.prevmonthExport);
+          if (parsedData.prevmonthimport) setprevmonthImport(parsedData.prevmonthimport);
           if (parsedData.importUnits) setImportUnits(parsedData.importUnits);
           if (parsedData.tariff) {
             setTariff(parsedData.tariff);
@@ -68,12 +72,13 @@ export default function MainApp() {
     try {
       await AsyncStorage.setItem(
         'solar-data',
-        JSON.stringify({ generation, exportUnits, importUnits, tariff })
+        JSON.stringify({ generation,prevmonthExport ,exportUnits,prevmonthimport, importUnits, tariff })
       );
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
+
 
   const saveTariffAndCloseInput = () => {
     if (tariff) {
@@ -106,51 +111,57 @@ const calculate = () => {
     return;
   }
 
-  const g = generation ? parseFloat(generation) : null; // Optional
+  const g = generation ? parseFloat(generation) : null;
+  const pe = parseFloat(prevmonthExport);
+  const pi = parseFloat(prevmonthimport);
   const e = parseFloat(exportUnits);
   const i = parseFloat(importUnits);
   const t = parseFloat(tariff);
 
-  if ((g !== null && g < 0) || e < 0 || i < 0 || t < 0) {
-    Alert.alert(
-      'Invalid Input',
-      'Values cannot be negative.',
-      [{ text: 'OK', style: 'default' }]
-    );
+  if ((g !== null && g < 0) || pe < 0 || pi < 0 || e < 0 || i < 0 || t < 0) {
+    Alert.alert('Invalid Input', 'Values cannot be negative.', [{ text: 'OK' }]);
     return;
   }
 
-  if ((g !== null && isNaN(g)) || isNaN(e) || isNaN(i) || isNaN(t)) {
-    Alert.alert(
-      'Invalid Input',
-      'Please enter valid numeric values.',
-      [{ text: 'OK', style: 'default' }]
-    );
+  if ((g !== null && isNaN(g)) || isNaN(pe) || isNaN(pi) || isNaN(e) || isNaN(i) || isNaN(t)) {
+    Alert.alert('Invalid Input', 'Please enter valid numeric values.', [{ text: 'OK' }]);
     return;
   }
 
-  const netExport = e - i;
-  const netBill = netExport > 0 ? 0 : (i - e) * t;
+  const preexport = e - pe;
+  const preimport = i - pi;
+
+  const netExport = preexport - preimport;
+
+  const netBill = netExport < 0 ? Math.abs(netExport) * t : 0;
   const credit = netExport > 0 ? netExport * t : 0;
-  const savings = i * t;
-  const selfConsumed = g !== null ? g - e : 'N/A';
+  const selfConsumed = g !== null ? g - preexport : 'N/A';
+  const totalConsumed = g !== null ? preimport + (g - preexport) : 'N/A';
+  const currentMonthConsumed = g !== null ? preimport + (g - preexport) : 'N/A';
 
   setResults({
-    importUnits: i,
+    importUnits: parseFloat(preimport.toFixed(2)),
     netExport: parseFloat(netExport.toFixed(2)),
     netBill: parseFloat(netBill.toFixed(2)),
     credit: parseFloat(credit.toFixed(2)),
-    savings: parseFloat(savings.toFixed(2)),
-    selfConsumed: selfConsumed !== 'N/A' ? parseFloat(selfConsumed.toFixed(2)) : 'N/A'
+    savings: parseFloat((preimport * t).toFixed(2)),
+    selfConsumed: selfConsumed !== 'N/A' ? parseFloat(selfConsumed.toFixed(2)) : 'N/A',
+    totalConsumed: totalConsumed !== 'N/A' ? parseFloat(totalConsumed.toFixed(2)) : 'N/A',
+    currentmonthImport: parseFloat(i.toFixed(2)),
+    currentMonthConsumed: currentMonthConsumed !== 'N/A' ? parseFloat(currentMonthConsumed.toFixed(2)) : 'N/A',
+    totalToPay: parseFloat((netBill || 0).toFixed(2))
   });
 
   saveToStorage();
 };
 
 
+
   const handleClear = () => {
     setGeneration('');
     setExportUnits('');
+    setprevmonthExport('');
+    setprevmonthImport('');
     setImportUnits('');
     setResults(null);
   };
@@ -287,7 +298,7 @@ return (
           </View>
         )}
 
-        <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Total Generation:</Text>
+        <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Current Total Generation:</Text>
         <TextInput
           style={styles.input}
           placeholder="Total Generation"
@@ -298,21 +309,42 @@ return (
           placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         />
 
-        <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Total Export:</Text>
+  <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Previous Month Export:</Text>
         <TextInput
           style={styles.input}
-          placeholder="Total Export"
+          placeholder="Prev Month Export"
+          keyboardType="numeric"
+          value={prevmonthExport}
+          onChangeText={setprevmonthExport}
+          editable={!!tariff}
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+        />
+
+        <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Current Month Export:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Current Month Export"
           keyboardType="numeric"
           value={exportUnits}
           onChangeText={setExportUnits}
           editable={!!tariff}
           placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         />
-
-        <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Total Import:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Previous Month Import:</Text>
         <TextInput
           style={styles.input}
-          placeholder="Total Import"
+          placeholder="Previous Month Import"
+          keyboardType="numeric"
+          value={prevmonthimport}
+          onChangeText={setprevmonthImport}
+          editable={!!tariff}
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+        />
+
+        <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Current Month Import:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Current Month Import"
           keyboardType="numeric"
           value={importUnits}
           onChangeText={setImportUnits}
@@ -343,6 +375,9 @@ return (
 
             <Text style={[styles.resultText, { fontWeight: 'bold' }]}>
               Total units Consumed: {(results.selfConsumed + results.importUnits).toFixed(2)} units
+            </Text>
+            <Text style={styles.resultText}>
+              Current Month Consumed: {results.currentmonthImport.toFixed(2)} units
             </Text>
 
             {results.netExport < 0 ? (
