@@ -39,6 +39,8 @@ export default function MainApp() {
   const styles = isDarkMode ? darkStyles : lightStyles;
   const navigation = useNavigation();
     const isFocused = useIsFocused();
+const [showPrevMonthExportInput, setShowPrevMonthExportInput] = useState(false);
+const [showPrevMonthImportInput, setShowPrevMonthImportInput] = useState(false);
 
 
   useEffect(() => {
@@ -130,14 +132,12 @@ const calculate = () => {
 
   const preexport = e - pe;
   const preimport = i - pi;
-
   const netExport = preexport - preimport;
-
   const netBill = netExport < 0 ? Math.abs(netExport) * t : 0;
   const credit = netExport > 0 ? netExport * t : 0;
   const selfConsumed = g !== null ? g - preexport : 'N/A';
-  const totalConsumed = g !== null ? preimport + (g - preexport) : 'N/A';
   const currentMonthConsumed = g !== null ? preimport + (g - preexport) : 'N/A';
+  const totalConsumed = g !== null ? i + (g - e) : 'N/A';
 
   setResults({
     importUnits: parseFloat(preimport.toFixed(2)),
@@ -146,15 +146,14 @@ const calculate = () => {
     credit: parseFloat(credit.toFixed(2)),
     savings: parseFloat((preimport * t).toFixed(2)),
     selfConsumed: selfConsumed !== 'N/A' ? parseFloat(selfConsumed.toFixed(2)) : 'N/A',
-    totalConsumed: totalConsumed !== 'N/A' ? parseFloat(totalConsumed.toFixed(2)) : 'N/A',
-    currentmonthImport: parseFloat(i.toFixed(2)),
     currentMonthConsumed: currentMonthConsumed !== 'N/A' ? parseFloat(currentMonthConsumed.toFixed(2)) : 'N/A',
+    totalConsumed: totalConsumed !== 'N/A' ? parseFloat(totalConsumed.toFixed(2)) : 'N/A',
+    // currentmonthImport: parseFloat(i.toFixed(2)),
     totalToPay: parseFloat((netBill || 0).toFixed(2))
   });
 
   saveToStorage();
 };
-
 
 
   const handleClear = () => {
@@ -309,16 +308,35 @@ return (
           placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         />
 
-  <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Previous Month Export:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Prev Month Export"
-          keyboardType="numeric"
-          value={prevmonthExport}
-          onChangeText={setprevmonthExport}
-          editable={!!tariff}
-          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
-        />
+{!showPrevMonthExportInput ? (
+  <View style={styles.tariffContainer}>
+    <Text style={[styles.tariffText, { color: isDarkMode ? 'white' : 'black' }]}>
+      Previous Month Export: {prevmonthExport || 0}
+    </Text>
+    <TouchableOpacity onPress={() => setShowPrevMonthExportInput(true)}>
+      <Text style={[styles.editTariff, { color: isDarkMode ? 'yellow' : 'black' }]}>Edit</Text>
+    </TouchableOpacity>
+  </View>
+) : (
+  <View style={styles.tariffInputContainer}>
+    <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>
+      Enter Previous Month Export:
+    </Text>
+    <TextInput
+      style={styles.input}
+      placeholder="Prev Month Export"
+      keyboardType="numeric"
+      value={prevmonthExport}
+      onChangeText={setprevmonthExport}
+      placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+    />
+    <View style={styles.buttonRow}>
+      <Button title="Save" onPress={() => setShowPrevMonthExportInput(false)} />
+      <Button title="Cancel" onPress={() => setShowPrevMonthExportInput(false)} color="red" />
+    </View>
+  </View>
+)}
+
 
         <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Current Month Export:</Text>
         <TextInput
@@ -330,16 +348,35 @@ return (
           editable={!!tariff}
           placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         />
-            <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Previous Month Import:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Previous Month Import"
-          keyboardType="numeric"
-          value={prevmonthimport}
-          onChangeText={setprevmonthImport}
-          editable={!!tariff}
-          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
-        />
+      {!showPrevMonthImportInput ? (
+  <View style={styles.tariffContainer}>
+    <Text style={[styles.tariffText, { color: isDarkMode ? 'white' : 'black' }]}>
+      Previous Month Import: {prevmonthimport || 0}
+    </Text>
+    <TouchableOpacity onPress={() => setShowPrevMonthImportInput(true)}>
+      <Text style={[styles.editTariff, { color: isDarkMode ? 'yellow' : 'black' }]}>Edit</Text>
+    </TouchableOpacity>
+  </View>
+) : (
+  <View style={styles.tariffInputContainer}>
+    <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>
+      Enter Previous Month Import:
+    </Text>
+    <TextInput
+      style={styles.input}
+      placeholder="Previous Month Import"
+      keyboardType="numeric"
+      value={prevmonthimport}
+      onChangeText={setprevmonthImport}
+      placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+    />
+    <View style={styles.buttonRow}>
+      <Button title="Save" onPress={() => setShowPrevMonthImportInput(false)} />
+      <Button title="Cancel" onPress={() => setShowPrevMonthImportInput(false)} color="red" />
+    </View>
+  </View>
+)}
+
 
         <Text style={[styles.label, { color: isDarkMode ? 'white' : 'black' }]}>Current Month Import:</Text>
         <TextInput
@@ -373,11 +410,11 @@ return (
               Self Consumed from Solar: {results.selfConsumed.toFixed(2)} units
             </Text>
 
+            {/* <Text style={styles.resultText}>
+              Current Month Consumed: {results.currentmonthImport.toFixed(2)} units
+            </Text> */}
             <Text style={[styles.resultText, { fontWeight: 'bold' }]}>
               Total units Consumed: {(results.selfConsumed + results.importUnits).toFixed(2)} units
-            </Text>
-            <Text style={styles.resultText}>
-              Current Month Consumed: {results.currentmonthImport.toFixed(2)} units
             </Text>
 
             {results.netExport < 0 ? (
