@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.stj.solarcalculator'
+    namespace 'com.stjj.solarCalculato'
     defaultConfig {
-        applicationId 'com.stj.solarcalculator'
+        applicationId 'com.stjj.solarCalculato'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

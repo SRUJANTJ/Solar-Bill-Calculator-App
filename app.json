@@ -1,38 +1,43 @@
 {
   "expo": {
     "name": "Solar Calculator",
-    "slug": "solar-calculator",
-    "version": "1.0.0",
+    "slug": "solar-Calculator",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/solarenergy.jpeg",
-    "userInterfaceStyle": "light",
+    "scheme": "Solar Calculator",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/solarenergy.jpeg",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.stj.solarcalculator",
-      "icon": "./assets/solarenergy.jpeg"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/solarenergy.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.stj.solarcalculator",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.stjj.solarCalculator"
     },
     "web": {
+      "bundler": "metro",
+      "output": "static",
       "favicon": "./assets/solarenergy.jpeg"
     },
-    "extra": {
-      "eas": {
-        "projectId": "3fb8934f-785a-4221-8cc0-1cef93cf19d9"
-      }
-    },
-    "owner": "stjj"
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/solarenergy.jpeg",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }

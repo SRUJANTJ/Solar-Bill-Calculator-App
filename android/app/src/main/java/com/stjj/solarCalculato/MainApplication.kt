@@ -1,4 +1,4 @@
-package com.stj.solarcalculator
+package com.stjj.solarCalculato
 
 import android.app.Application
 import android.content.res.Configuration

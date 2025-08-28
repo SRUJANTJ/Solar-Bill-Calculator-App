@@ -1,14 +1,25 @@
-import React from 'react';
-import {  Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const PrivacyPolicy = () => {
+  const router = useRouter();
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
+        {/* Header with Back Button */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+            <Ionicons name="arrow-back" size={24} color="#000" />
+            <Text style={styles.backText}></Text>
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.heading}>Privacy Policy</Text>
         <Text style={styles.text}>
           Our app does not collect or share any personal data.
-          All information Like Total Generation,Total Export, Total Import etc will stored locally on your device using AsyncStorage.
+          All information like Total Generation, Total Export, Total Import etc will be stored locally on your device using AsyncStorage.
           We respect your privacy and ensure no data is transmitted or sold.
         </Text>
         <Text style={styles.text}>
@@ -29,6 +40,19 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 20,
+  },
+  header: {
+    marginTop: 40, // move header down from top
+    marginBottom: 20,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backText: {
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: '500',
   },
   heading: {
     fontSize: 22,

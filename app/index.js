@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  Alert,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  Image,
-  SafeAreaView, 
-  useColorScheme,
-  ActivityIndicator ,
-  BackHandler ,
-  Modal
-} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Alert,
+    BackHandler,
+    Button,
+    Image,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    useColorScheme,
+    View
+} from 'react-native';
 import Svg, { Path } from 'react-native-svg'; // Import SVG components
-import { useNavigation,useIsFocused  } from '@react-navigation/native';
+
+const router = useRouter();
+
 export default function MainApp() {
   const [generation, setGeneration] = useState('');
   const [prevmonthExport, setprevmonthExport] = useState('');
@@ -406,6 +410,22 @@ return (
             <Text style={[styles.resultText, results.credit > 0 && { color: 'green' }]}>
               Export Credit: ₹{results.credit.toFixed(2)}
             </Text>
+    <Text
+  style={[
+    styles.pdc,
+    results.pdc <= 0
+      ? { color: 'gray' } // no consumption
+      : results.pdc < 5
+      ? { color: 'green' } // low usage
+      : results.pdc < 10
+      ? { color: 'orange' } // medium usage
+      : { color: 'purple' } // high usage
+  ]}
+>
+  Per Day Consumed : {((results.selfConsumed + results.importUnits)/ new Date().getDate()).toFixed(2)} units
+</Text>
+
+
             <Text style={[styles.resultText, results.selfConsumed > 0 && { color: 'green' }]}>
               Self Consumed from Solar: {results.selfConsumed.toFixed(2)} units
             </Text>
@@ -431,11 +451,12 @@ return (
       </ScrollView>
 
       <View style={styles.privacyContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
-          <Text style={styles.privacytext}>Privacy Policy</Text>
-        </TouchableOpacity>
+ 
+<TouchableOpacity onPress={() => router.push('/PrivacyPolicy')}>
+  <Text style={styles.privacytext}>Privacy Policy</Text>
+</TouchableOpacity>
         <Text style={styles.footer}>© {new Date().getFullYear()} Developed by STJ</Text>
-        <Text style={styles.version}>Version 1.0.0</Text>
+        <Text style={styles.version}>Version 1.0.1</Text>
       </View>
     </KeyboardAvoidingView>
   </SafeAreaView>
@@ -681,6 +702,11 @@ const darkStyles = StyleSheet.create({
   resultText: {
     ...baseStyles.resultText,
     color: '#fff',
+  },
+  pdc:{
+...baseStyles.resultText,
+color: 'blue',
+
   },
   footer: {
     ...baseStyles.footer,
