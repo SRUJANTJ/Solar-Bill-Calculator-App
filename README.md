@@ -1,4 +1,4 @@
-https://github.com/SRUJANTJ/Solar-Bill-Calculator-App/blob/568eb84954cd653ef00dbf9fcbb47e53dfb14585/assets/solarfront%20(1).jpeg
+![APP]([https://github.com/SRUJANTJ/calculator/assets/91385622/e9ae1a01-40eb-4544-92dd-fe1283637d9d](https://github.com/SRUJANTJ/Solar-Bill-Calculator-App/blob/568eb84954cd653ef00dbf9fcbb47e53dfb14585/assets/solarfront%20(1).jpeg))
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
