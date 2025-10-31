@@ -1,5 +1,4 @@
-# Welcome to your Expo app 👋
-
+https://github.com/SRUJANTJ/Solar-Bill-Calculator-App/blob/main/assets/solarfront%20(1).jpeg
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
